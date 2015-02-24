@@ -1,0 +1,5 @@
+app_api_v1_authors:
+    type: rest
+    resource: "@AppBundle/Resources/config/routing/author.yml"
+    prefix:   /api/v1/authors
+
