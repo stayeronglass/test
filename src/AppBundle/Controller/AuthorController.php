@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use FOS\RestBundle\Controller\FOSRestController;
 
 use AppBundle\Entity\Author;
 use AppBundle\Form\AuthorType;
@@ -12,7 +12,7 @@ use AppBundle\Form\AuthorType;
  * Author controller.
  *
  */
-class AuthorController extends Controller
+class AuthorController extends FOSRestController
 {
 
     /**
@@ -25,9 +25,12 @@ class AuthorController extends Controller
 
         $entities = $em->getRepository('AppBundle:Author')->findAll();
 
-        return $this->render('AppBundle:Author:index.html.twig', array(
-            'entities' => $entities,
-        ));
+        $view = $this->view($entities, 200)
+            ->setTemplate("AppBundle:Author:index.html.twig")
+            ->setTemplateVar('users')
+        ;
+
+        return $this->handleView($view);
     }
     /**
      * Creates a new Author entity.

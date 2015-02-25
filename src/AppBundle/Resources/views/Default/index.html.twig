@@ -1,0 +1,80 @@
+{% verbatim %}
+<html><head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title>AngularJS: Infinite Scrolling </title>
+
+    <script src="http://binarymuse.github.io/ngInfiniteScroll/javascripts/application.js?1375125400" type="text/javascript"></script>
+    <link href="http://binarymuse.github.io/ngInfiniteScroll/stylesheets/application.css?1375125404" media="screen" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        li {
+            height: 120px;
+            border-bottom: 1px solid gray;
+        }
+
+        #fixed {
+            height: 400px;
+            overflow: auto;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+        var myApp = angular.module('myApp', ['infinite-scroll']);
+
+        myApp.controller('DemoController', function($scope, Test) {
+            $scope.test = new Test();
+        });
+
+        myApp.factory('Test', function($http) {
+            var Test = function() {
+                this.items = [];
+                this.busy = false;
+                this.after = '';
+            };
+
+            Test.prototype.nextPage = function() {
+                if (this.busy) return;
+                this.busy = true;
+
+                var url = "http://test.localhost/api/v1/authors/.json?after=" + this.after + "";
+                $http.get(url).success(function(data) {
+                    console.log(data);
+
+                    for (var i = 0; i < data.length; i++) {
+                        this.items.push(data[i]);
+                    }
+                    this.after = this.items[this.items.length - 1].id;
+                    this.busy = false;
+
+                }.bind(this));
+            };
+
+            return Test;
+        });
+    </script>
+</head>
+<body>
+
+<div style="height: 500px;"></div>
+<h1>Авторы</h1>
+
+<div ng-app='myApp' ng-controller='DemoController'>
+
+    <div infinite-scroll='test.nextPage()' infinite-scroll-disabled='test.busy' infinite-scroll-distance='1' style="padding: 50px;">
+        <div ng-repeat='item in test.items' style="margin-bottom: 30px;">
+            <span class='score' style="font-weight: bold;">{{item.name}}</span>
+            <br />
+          <span class='title'>
+            {{item.description}}
+          </span>
+            <div style='clear: both;'></div>
+        </div>
+
+        <div ng-show='test.busy'>Loading data...</div>
+    </div>
+</div>
+
+
+</body></html>
+{% endverbatim %}
