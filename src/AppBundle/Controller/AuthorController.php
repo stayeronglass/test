@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\FOSRestController;
+use Doctrine\ORM\Query;
 
 use AppBundle\Entity\Author;
 use AppBundle\Form\AuthorType;
@@ -19,16 +20,30 @@ class AuthorController extends FOSRestController
      * Lists all Author entities.
      *
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('AppBundle:Author')->findAll();
+        //$entities = $em->getRepository('AppBundle:Author')->findAll();
 
-        $view = $this->view($entities, 200)
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->createQueryBuilder();
+
+        $entities = $qb->select('a.id, a.name, a.description')
+            ->from('AppBundle:Author', 'a')
+            ->setMaxResults(5);
+        ;
+
+        if($after = $request->get('after')):
+            $entities->andWhere('a.id > :after')->setParameter('after', $after);
+        endif;
+
+
+        $view = $this->view($entities->getQuery()->getResult(Query::HYDRATE_ARRAY), 200)
             ->setTemplate("AppBundle:Author:index.html.twig")
             ->setTemplateVar('users')
         ;
+        sleep(1);
 
         return $this->handleView($view);
     }
