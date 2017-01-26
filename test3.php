@@ -87,7 +87,7 @@ class Route
         if ($start == $finish)
             throw new routeException("Одинаковые города прибытия и отправления!");
 
-        $this->start = $start;
+        $this->start  = $start;
         $this->finish = $finish;
         $this->routes = $routes;
 
@@ -115,14 +115,14 @@ class Route
 
             $route['start'] = trim($route['start']);
             if (empty($route['start']))
-                throw new routeException("Пустое город отправления для индекса $key!");
+                throw new routeException("Пустой город отправления для индекса $key!");
             if (preg_match('#^а-яё+\-$#iu', $route['start']))
                 throw new routeException("Неверное название города отправления \"{$route['start']}\" для индекса $key!");
 
 
             $route['finish'] = trim($route['finish']);
             if (empty($route['finish']))
-                throw new routeException("Пустое город прибытия для индекса $key!");
+                throw new routeException("Пустой город прибытия для индекса $key!");
             if (preg_match('#^а-яё+\-$#iu', $route['finish']))
                 throw new routeException("Неверное название города \"{$route['finish']}\" для индекса $key!");
 
